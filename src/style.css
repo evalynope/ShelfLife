@@ -1,0 +1,43 @@
+
+h1{
+    color:#CCDBDC;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 100px;
+    
+}
+img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    margin-top: 50px;
+}
+.center-left{
+    color: #CCDBDC;
+    font-size: 50px;
+    position: absolute;
+    top: 35%;
+    left: 27%;
+}
+.book-number{
+    color: #CCDBDC;
+    font-size: 30px;
+    position: absolute;
+    top: 410px;
+    left: 19%;
+}
+.edit-button{
+    color: #CCDBDC;
+    font-size: 10px;
+    position: absolute;
+    top: 275px;
+    left: 43%;
+}
+.add-button{
+    color: #F2EFC7;
+    font-size: 10px;
+    position: absolute;
+    top: 420px;
+    left: 22%;
+}

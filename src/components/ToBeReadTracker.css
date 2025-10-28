@@ -1,0 +1,91 @@
+
+
+h1{ /*ShelfLife title's color*/
+    color:#ffffff;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 100px;
+    font-family: "Baskerville", serif; 
+    font-weight: normal;
+    
+}
+body{
+    background-color: #6D6875;
+    /* currently the background of the whole page */
+}
+
+h2{
+    /*ADD BOOK's color*/
+    color: #ffffff;
+    font-weight: normal;
+    font-size: 65px;
+    position: absolute;
+    top: 25%;
+    right: 23%;
+    font-family: Monaco, "Lucida Console", Consolas, "Courier New", monospace;
+    /* font-family: 'La Belle Aurore', cursive; */
+}
+/*Books' styling */
+
+.book {
+    color: #ffffff;
+    font-weight: normal;
+    font-size: 65px;
+    position: absolute;
+    top: 25%;
+    left: 23%;
+    font-family: Monaco, "Lucida Console", Consolas, "Courier New", monospace;
+
+}
+
+.center-left{
+    color:#ffffff;
+    font-size: 60px;
+    font-weight: normal;
+    position: absolute;
+    top: 30%;
+    left: 27%;
+    /* font-family: 'La Belle Aurore', cursive; */
+}
+
+.strong{
+    word-spacing: 4px;
+}
+ol{
+    /*the book titles themselves' styling*/
+    color: rgb(59, 33, 14);
+    font-size: 14px;
+    position: absolute;
+    top: 38%;
+    left: 15%;
+    font-family: Monaco, "Lucida Console", Consolas, "Courier New", monospace;
+    /* font-family: 'La Belle Aurore', cursive; */
+    /* word-spacing: 2px; */
+}
+
+/*button ?*/
+
+.book-form{
+    position: absolute;
+    top: 70%;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    width: 300px;
+    right: 22%;
+
+
+    /* position: absolute; */
+}
+/*button ?*/
+.add{
+    color: #CCDBDC;
+    width: 100px;
+    height: 60px;
+    font-weight: bold;
+    position: absolute;
+    top: 300%;
+    right: 29%;
+}
+ */
+
