@@ -8,7 +8,7 @@ function isValidEmail(email) {
   return re.test(email);
 }
 
-function Signup({ setUserLoggedIn }) {
+function Signup({ setUserLoggedIn, setCurrentUserEmail }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,6 +35,7 @@ function Signup({ setUserLoggedIn }) {
 
       // Mark user as logged in
       setUserLoggedIn(true);
+      setCurrentUserEmail(email);
 
       // Redirect to dashboard
       navigate("/dashboard");

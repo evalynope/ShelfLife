@@ -1,26 +1,45 @@
-// src/components/Dashboard.jsx
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { getBooks } from "../api/BookAPI";
 
-function Dashboard() {
-  const navigate = useNavigate();
+function TBR({ currentUserEmail }) {
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    async function fetchBooks() {
+      if (!currentUserEmail) return;
+      const userBooks = await getBooks(currentUserEmail);
+      setBooks(userBooks);
+    }
+    fetchBooks();
+  }, [currentUserEmail]);
 
   return (
-    <div style={{ textAlign: "center", padding: "50px" }}>
-      <h1>Dashboard</h1>
-      <p>Welcome! This is your personal book dashboard.</p>
-
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={() => navigate("/mytitles")} style={{ marginRight: "10px", padding: "10px 20px" }}>
-          My Titles
-        </button>
-        <button onClick={() => navigate("/")}>
-          Home
-        </button>
-      </div>
+    <div style={{ padding: "20px" }}>
+      <h2>My TBR List</h2>
+      {books.length === 0 ? (
+        <p>No books yet. Try adding one from the Search page!</p>
+      ) : (
+        <div style={{ display: "flex", flexWrap: "wrap" }}>
+          {books.map((b) => (
+            <div
+              key={b.id}
+              style={{
+                border: "1px solid #ccc",
+                margin: "10px",
+                padding: "10px",
+                width: "200px",
+              }}
+            >
+              {b.coverUrl && <img src={b.coverUrl} alt={b.title} width="100%" />}
+              <h4>{b.title}</h4>
+              <p>{b.author}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-export default Dashboard;
+export default TBR;
 

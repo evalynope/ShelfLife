@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/UserAPI";
 
-function LoginPage({ setUserLoggedIn }) {
+function LoginPage({ setUserLoggedIn, setCurrentUserEmail }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +23,8 @@ function LoginPage({ setUserLoggedIn }) {
 
       // Update app login state
       setUserLoggedIn(true);
+      setCurrentUserEmail(email); // <-- add this
+
 
       // Redirect to dashboard
       navigate("/dashboard");

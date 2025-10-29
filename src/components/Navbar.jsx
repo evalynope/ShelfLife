@@ -11,6 +11,7 @@ function Navbar() {
         <Link to="/login">Login</Link>
         <Link to="/dashboard">My TBR List</Link>
         <Link to="/mytitles">My Titles</Link>
+        <Link to="/search">Search Books</Link>
       </div>
     </nav>
   );
