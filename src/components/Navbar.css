@@ -15,7 +15,7 @@
   margin-left: 20px;
   text-decoration: none;
   font-weight: bold;
-  font-family: "garamond", sans-serif; 
+  font-family: "Courier", sans-serif; 
 }
 
 .nav-links a:hover {
@@ -24,5 +24,6 @@
 
 .nav-title {
   font-size: 1.5rem;
-  font-family: "garamond", sans-serif;
+  font-family: "Courier", sans-serif;
+  font-weight: "bold";
 }

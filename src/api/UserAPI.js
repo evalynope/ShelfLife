@@ -1,5 +1,6 @@
 import { fetchAllRecords, createRecord, updateRecord, deleteRecord } from "./CoreAPI";
 
+// --- Utility functions for secure password hashing ---
 async function generateSHA256Hash(text) {
   const encodedText = new TextEncoder().encode(text);
   const hashBuffer = await crypto.subtle.digest("SHA-256", encodedText);
@@ -16,22 +17,28 @@ function generateSalt(length = 16) {
     .join("");
 }
 
+// --- Register a new user ---
 export async function registerUser({ email, password, displayName }) {
   const normalizedEmail = email.trim().toLowerCase();
+
+  // Fetch all existing user records
   const allRecords = await fetchAllRecords();
   const existingUsers = allRecords.filter(
     (record) => record.data_json?.type === "user"
   );
 
+  // Check if email already exists
   const isEmailTaken = existingUsers.some(
     (userRecord) => userRecord.data_json.email === normalizedEmail
   );
   if (isEmailTaken) throw new Error("That email is already registered.");
 
+  // Generate secure salt and hash
   const salt = generateSalt();
   const hashedPassword = await generateSHA256Hash(salt + password);
 
-  await createRecord({
+  // Create user record on Heroku
+  const result = await createRecord({
     type: "user",
     email: normalizedEmail,
     displayName: displayName || normalizedEmail,
@@ -40,16 +47,33 @@ export async function registerUser({ email, password, displayName }) {
     createdAt: Date.now(),
   });
 
+  const created = result?.[0];
+  if (!created?.id) throw new Error("Failed to create user record.");
+
+  // ✅ NEW: Store the Heroku id inside the record itself for easy lookup
+  try {
+    await updateRecord(created.id, { id: created.id });
+  } catch (err) {
+    console.warn("⚠️ Failed to write Heroku ID into record:", err.message);
+  }
+
+  // Save session locally (include true Heroku record id)
   const sessionToken = btoa(`${normalizedEmail}|${Date.now()}`);
   localStorage.setItem("session_token", sessionToken);
   localStorage.setItem(
     "current_user",
-    JSON.stringify({ email: normalizedEmail, displayName })
+    JSON.stringify({
+      id: created.id, // ✅ true Heroku record id
+      email: normalizedEmail,
+      displayName: displayName || normalizedEmail,
+    })
   );
 }
 
+// --- Login existing user ---
 export async function loginUser({ email, password }) {
   const normalizedEmail = email.trim().toLowerCase();
+
   const allRecords = await fetchAllRecords();
   const existingUsers = allRecords.filter(
     (record) => record.data_json?.type === "user"
@@ -60,28 +84,33 @@ export async function loginUser({ email, password }) {
   );
   if (!matchingUser) throw new Error("Invalid email or password.");
 
+  // Validate password hash
   const expectedHash = await generateSHA256Hash(
     matchingUser.data_json.salt + password
   );
   if (expectedHash !== matchingUser.data_json.passwordHash)
     throw new Error("Invalid email or password.");
 
+  // Save new session
   const sessionToken = btoa(`${normalizedEmail}|${Date.now()}`);
   localStorage.setItem("session_token", sessionToken);
   localStorage.setItem(
     "current_user",
     JSON.stringify({
+      id: matchingUser.id, // ✅ true Heroku record id
       email: normalizedEmail,
       displayName: matchingUser.data_json.displayName,
     })
   );
 }
 
+// --- Logout current user ---
 export function logoutUser() {
   localStorage.removeItem("session_token");
   localStorage.removeItem("current_user");
 }
 
+// --- Get logged in user from local storage ---
 export function getCurrentUser() {
   const storedUser = localStorage.getItem("current_user");
   return storedUser ? JSON.parse(storedUser) : null;
