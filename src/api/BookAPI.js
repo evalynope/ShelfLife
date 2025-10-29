@@ -19,6 +19,7 @@ function normalizeBookRecord(raw) {
     workKey: b.workKey ?? "",
     ownerEmail: b.ownerEmail ?? "",
     createdAt: b.createdAt ?? null,
+    status: b.status ?? "tbr",
   };
 }
 
@@ -75,7 +76,9 @@ export async function getBooks(currentUserEmail = null) {
   const filtered = currentUserEmail
     ? books.filter(r => r.data_json?.ownerEmail === currentUserEmail)
     : books;
+    console.log("Fetched books:", all);
   return filtered.map(normalizeBookRecord);
+
 }
 
 export async function addBookFromOpenLibrary(openBook, currentUserEmail) {
@@ -91,6 +94,7 @@ export async function addBookFromOpenLibrary(openBook, currentUserEmail) {
     workKey: openBook.workKey,
     ownerEmail: currentUserEmail ?? "",
     createdAt: Date.now(),
+    status: "tbr" 
   };
 
   const result = await createRecord(payload);
@@ -104,6 +108,7 @@ export async function updateBook(recordId, updatedFields) {
     author: updatedFields.author ?? "",
     description: updatedFields.description ?? "",
     coverUrl: updatedFields.coverUrl ?? null,
+    status: updatedFields.status ?? undefined,
   };
   const result = await updateRecord(recordId, payload);
   const updated = result?.[0] ?? null;

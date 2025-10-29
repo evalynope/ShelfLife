@@ -27,11 +27,23 @@ function SearchBooks({ currentUserEmail }) {
   const handleAddBook = async (book) => {
     try {
       await addBookFromOpenLibrary(book, currentUserEmail);
-      alert(`✅ Added "${book.title}" to your TBR list!`);
+      alert(`✅ Added "${book.title}" to your TBR shelf!`);
     } catch (err) {
       alert(`❌ Failed to add book: ${err.message}`);
     }
   };
+
+ 
+  const handleMarkAsRead = async (book) => {
+    try {
+        await addBookFromOpenLibrary(book, currentUserEmail, "read");
+        alert(`✅ Marked "${book.title}" as read!`);
+    } catch (err) {
+     alert(`❌ Failed to mark as read: ${err.message}`);
+    }
+};
+
+    
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
@@ -73,7 +85,10 @@ function SearchBooks({ currentUserEmail }) {
             )}
             <h4>{book.title}</h4>
             <p>{book.authors?.join(", ")}</p>
-            <button onClick={() => handleAddBook(book)}>Add to TBR</button>
+            <button onClick={() => handleAddBook(book)}>Add to TBR Shelf</button>
+            <button onClick={() => handleMarkAsRead(book)} style={{ marginTop: "5px" }}>
+             Mark as Read
+            </button>
           </div>
         ))}
       </div>

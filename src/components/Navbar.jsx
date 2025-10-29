@@ -7,11 +7,11 @@ function Navbar() {
     <nav className="navbar">
       <h2 className="nav-title">Shelf Life</h2>
       <div className="nav-links">
+        <Link to="/search">Search Books</Link>
+        <Link to="/dashboard">My TBR Shelf</Link>
         <Link to="/">Home</Link>
         <Link to="/login">Login</Link>
-        <Link to="/dashboard">My TBR List</Link>
-        <Link to="/mytitles">My Titles</Link>
-        <Link to="/search">Search Books</Link>
+        <Link to="/mytitles">Read</Link>
       </div>
     </nav>
   );
