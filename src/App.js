@@ -5,7 +5,7 @@ import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import LoginPage from "./components/LoginPage";
 import Signup from "./components/Signup";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/TBR";
 import MyTitles from "./components/MyTitles";
 import ProtectedRoute from "./components/ProtectedRoute";
 
