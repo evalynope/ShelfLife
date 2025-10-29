@@ -1,4 +1,4 @@
-import { fetchAllRecords, createRecord } from "./CoreAPI";
+import { fetchAllRecords, createRecord, updateRecord, deleteRecord } from "./CoreAPI";
 import { getCurrentUser } from "./UserAPI";
 
 export async function addBookReview({ workKey, rating, text }) {

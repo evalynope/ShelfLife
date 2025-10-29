@@ -1,4 +1,4 @@
-import { fetchAllRecords, createRecord } from "./CoreAPI";
+import { fetchAllRecords, createRecord, updateRecord, deleteRecord } from "./CoreAPI";
 
 async function generateSHA256Hash(text) {
   const encodedText = new TextEncoder().encode(text);
