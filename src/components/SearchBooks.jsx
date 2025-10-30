@@ -26,7 +26,7 @@ function SearchBooks({ currentUserEmail }) {
 
   const handleAddBook = async (book) => {
     try {
-      await addBookFromOpenLibrary(book, currentUserEmail);
+      await addBookFromOpenLibrary(book, currentUserEmail, "tbr");
       alert(`✅ Added "${book.title}" to your TBR shelf!`);
     } catch (err) {
       alert(`❌ Failed to add book: ${err.message}`);

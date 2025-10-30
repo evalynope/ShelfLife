@@ -2,10 +2,38 @@ import React, { useEffect, useState } from "react";
 import { getBooks, deleteBook } from "../api/BookAPI";
 import { addBookReview, getReviewsForBook } from "../api/ReviewAPI";
 
+function StarRating({ value, onChange }) {
+  return (
+    <div style={{ margin: "6px 0" }}>
+      {[1, 2, 3, 4, 5].map((star) => {
+        const isFilled = star <= value;
+        return (
+          <span
+            key={star}
+            onClick={() => onChange(star)}
+            style={{
+              cursor: "pointer",
+              fontSize: "1.8rem",
+              color: isFilled ? "#f5c518" : "#ddd",
+              transition: "color 0.2s",
+              userSelect: "none",
+              WebkitTextStroke: isFilled ? "0" : "1px #999",
+            }}
+          >
+            ★
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+
+
 function MyTitles({ currentUserEmail }) {
   const [books, setBooks] = useState([]);
   const [activeBook, setActiveBook] = useState(null); // which book is being reviewed
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [reviews, setReviews] = useState({}); // store fetched reviews
 
@@ -56,7 +84,7 @@ function MyTitles({ currentUserEmail }) {
       // Reset form
       setActiveBook(null);
       setReviewText("");
-      setRating(5);
+      setRating(0);
     } catch (err) {
       alert(`❌ Error: ${err.message}`);
     }
@@ -100,14 +128,8 @@ function MyTitles({ currentUserEmail }) {
               {activeBook?.id === book.id && (
                 <div style={{ marginTop: "10px" }}>
                   <h5>Add a Review</h5>
-                  <input
-                    type="number"
-                    min="1"
-                    max="5"
-                    value={rating}
-                    onChange={(e) => setRating(Number(e.target.value))}
-                    style={{ width: "50px" }}
-                  />
+                  <StarRating value={rating} onChange={setRating} />
+
                   <br />
                   <textarea
                     value={reviewText}

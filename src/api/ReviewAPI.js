@@ -2,21 +2,7 @@ import { fetchAllRecords, createRecord } from "./CoreAPI";
 import { getCurrentUser } from "./UserAPI";
 
 // Optional helper (not required by your components, but kept for clarity)
-function normalizeReviewRecord(raw) {
-  if (!raw) return null;
-  const { id, data_json } = raw;
-  const r = data_json || {};
-  return {
-    id, // true Heroku record ID
-    type: r.type ?? "review",
-    workKey: r.workKey ?? "",
-    bookTitle: r.bookTitle ?? "",
-    rating: r.rating ?? 0,
-    text: r.text ?? "",
-    ownerEmail: r.ownerEmail ?? "",
-    createdAt: r.createdAt ?? null,
-  };
-}
+
 
 /**
  * Create a new review for the current logged-in user.

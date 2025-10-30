@@ -82,7 +82,7 @@ export async function getBooks(currentUserEmail = null) {
   }
 }
 
-export async function addBookFromOpenLibrary(openBook, userEmail) {
+export async function addBookFromOpenLibrary(openBook, userEmail, book_status) {
   const payload = {
     type: BOOK_TYPE,
     title: openBook.title,
@@ -94,30 +94,32 @@ export async function addBookFromOpenLibrary(openBook, userEmail) {
     workKey: openBook.workKey,
     ownerEmail: userEmail ?? "",
     createdAt: Date.now(),
+    status: book_status
   };
   const res = await createRecord(payload);
   const created = res?.[0] ?? null;
   return created ? normalizeBookRecord(created) : null;
 }
 
+// ✅ Safe updateBook that merges old fields instead of replacing them
 export async function updateBook(recordId, updatedFields) {
-  const payload = {
-    title: updatedFields.title ?? "",
-    author: updatedFields.author ?? "",
-    description: updatedFields.description ?? "",
-    coverUrl: updatedFields.coverUrl ?? null,
-    status: updatedFields.status ?? undefined,
-  };
+  //Fetch all records to find the full book object
+  const allRecords = await fetchAllRecords();
+  const record = allRecords.find(r => r.id === recordId);
+  if (!record) throw new Error(`Book with ID ${recordId} not found`);
 
-  try {
-    const res = await updateRecord(recordId, payload);
-    const updated = res?.[0] ?? null;
-    return updated ? normalizeBookRecord(updated) : null;
-  } catch (err) {
-    console.error("❌ updateBook failed:", err.message);
-    throw err;
-  }
+  //Merge existing data with new fields
+  const current = record.data_json || record.body || {};
+  const merged = { ...current, ...updatedFields };
+
+  //Send merged data back to the API
+  const result = await updateRecord(recordId, merged);
+
+  //Return normalized book
+  const updated = result?.[0];
+  return updated ? normalizeBookRecord(updated) : null;
 }
+
 
 export async function deleteBook(recordId) {
   try {
