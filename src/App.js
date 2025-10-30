@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
@@ -9,6 +9,8 @@ import Dashboard from "./components/TBR";
 import MyTitles from "./components/MyTitles";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SearchBooks from "./components/SearchBooks";
+import { getCurrentUser } from "./api/UserAPI";
+
 // import Status from "./components/Status";
 
 function App() {
@@ -17,12 +19,21 @@ function App() {
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
   const [userBooks, setUserBooks] = useState([]);
  
+  useEffect(() => {
+  const storedUser = getCurrentUser();
+  if (storedUser && storedUser.email) {
+    setUserLoggedIn(true);
+    setCurrentUserEmail(storedUser.email);
+  }
+}, [])
 
   const handleCloseModal = () => setShowModal(false);
 
   return (
   <Router>
-    <Navbar userLoggedIn={userLoggedIn} />
+    <Navbar userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />
+
+
 
     {/* Modal for not-logged-in warning */}
     {showModal && (
@@ -80,33 +91,35 @@ function App() {
 
       {/* Protected routes */}
       <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute userLoggedIn={userLoggedIn} setShowModal={setShowModal}>
-            <Dashboard currentUserEmail={currentUserEmail} />
-          </ProtectedRoute>
-        }
-      />
+  path="/dashboard"
+  element={
+    <ProtectedRoute setShowModal={setShowModal}>
+      <Dashboard currentUserEmail={currentUserEmail} />
+    </ProtectedRoute>
+  }
+/>
 
-      <Route
-        path="/mytitles"
-        element={
-          <ProtectedRoute userLoggedIn={userLoggedIn} setShowModal={setShowModal}>
-            <MyTitles currentUserEmail={currentUserEmail} />
-          </ProtectedRoute>
-        }
-      />
+<Route
+  path="/mytitles"
+  element={
+    <ProtectedRoute setShowModal={setShowModal}>
+      <MyTitles currentUserEmail={currentUserEmail} />
+    </ProtectedRoute>
+  }
+/>
 
-      <Route
-        path="/search"
-        element={
-          <ProtectedRoute userLoggedIn={userLoggedIn} setShowModal={setShowModal}>
-            <SearchBooks 
-            currentUserEmail={currentUserEmail} 
-            setUserBooks={setUserBooks}/>
-          </ProtectedRoute>
-        }
+<Route
+  path="/search"
+  element={
+    <ProtectedRoute setShowModal={setShowModal}>
+      <SearchBooks
+        currentUserEmail={currentUserEmail}
+        setUserBooks={setUserBooks}
       />
+    </ProtectedRoute>
+  }
+/>
+
     </Routes>
   </Router>
 );

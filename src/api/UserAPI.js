@@ -1,4 +1,4 @@
-import { fetchAllRecords, createRecord, updateRecord, deleteRecord } from "./CoreAPI";
+import { fetchAllRecords, createRecord, updateRecord } from "./CoreAPI";
 
 // --- Utility functions for secure password hashing ---
 async function generateSHA256Hash(text) {
@@ -112,6 +112,16 @@ export function logoutUser() {
 
 // --- Get logged in user from local storage ---
 export function getCurrentUser() {
-  const storedUser = localStorage.getItem("current_user");
-  return storedUser ? JSON.parse(storedUser) : null;
+  try {
+    const storedUser = localStorage.getItem("current_user");
+    if (!storedUser) return null;
+    const user = JSON.parse(storedUser);
+    if (!user || !user.email) return null;
+    return user;
+  } catch (err) {
+    console.warn("Error reading current_user:", err);
+    return null;
+  }
 }
+
+

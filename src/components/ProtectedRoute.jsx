@@ -1,10 +1,17 @@
+// src/components/ProtectedRoute.jsx
+import React from "react";
 import { Navigate } from "react-router-dom";
+import { getCurrentUser } from "../api/UserAPI";
 
-function ProtectedRoute({ userLoggedIn, setShowModal, children }) {
-  if (!userLoggedIn) {
-    setShowModal(true);
-    return <Navigate to="/login" />;
+function ProtectedRoute({ children, setShowModal }) {
+  const user = getCurrentUser();
+
+  if (!user || !user.email) {
+    // Show modal if provided, but still navigate safely
+    if (setShowModal) setShowModal(true);
+    return <Navigate to="/" replace />;
   }
+
   return children;
 }
 

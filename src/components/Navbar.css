@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #2B0504;
+  background-color: #2b0504;
   color: white;
   padding: 15px 40px;
   position: sticky;
@@ -15,7 +15,7 @@
   margin-left: 20px;
   text-decoration: none;
   font-weight: bold;
-  font-family: "Courier", sans-serif; 
+  font-family: "Courier", sans-serif;
 }
 
 .nav-links a:hover {
@@ -26,4 +26,22 @@
   font-size: 1.5rem;
   font-family: "Courier", sans-serif;
   font-weight: "bold";
+}
+
+.logout-btn {
+  display: inline-block;
+  background: none;
+  border: none;
+  color: white;
+  margin-left: 20px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: "Courier", sans-serif;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.logout-btn a:hover {
+  text-decoration: underline;
 }
