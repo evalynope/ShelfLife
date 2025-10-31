@@ -1,4 +1,4 @@
-import { fetchAllRecords, createRecord, updateRecord } from "./CoreAPI";
+import { fetchAllRecords, createRecord } from "./CoreAPI";
 
 // --- Utility functions for secure password hashing ---
 async function generateSHA256Hash(text) {
@@ -38,7 +38,7 @@ export async function registerUser({ email, password, displayName }) {
   const hashedPassword = await generateSHA256Hash(salt + password);
 
   // Create user record on Heroku
-  const result = await createRecord({
+  await createRecord({
     type: "user",
     email: normalizedEmail,
     displayName: displayName || normalizedEmail,
@@ -47,23 +47,13 @@ export async function registerUser({ email, password, displayName }) {
     createdAt: Date.now(),
   });
 
-  const created = result?.[0];
-  if (!created?.id) throw new Error("Failed to create user record.");
-
-  // ✅ NEW: Store the Heroku id inside the record itself for easy lookup
-  try {
-    await updateRecord(created.id, { id: created.id });
-  } catch (err) {
-    console.warn("⚠️ Failed to write Heroku ID into record:", err.message);
-  }
-
+ 
   // Save session locally (include true Heroku record id)
   const sessionToken = btoa(`${normalizedEmail}|${Date.now()}`);
   localStorage.setItem("session_token", sessionToken);
   localStorage.setItem(
     "current_user",
     JSON.stringify({
-      id: created.id, // ✅ true Heroku record id
       email: normalizedEmail,
       displayName: displayName || normalizedEmail,
     })
@@ -97,7 +87,6 @@ export async function loginUser({ email, password }) {
   localStorage.setItem(
     "current_user",
     JSON.stringify({
-      id: matchingUser.id, // ✅ true Heroku record id
       email: normalizedEmail,
       displayName: matchingUser.data_json.displayName,
     })

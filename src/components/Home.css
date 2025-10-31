@@ -2,6 +2,15 @@
   text-align: center;
   padding: 50px;
   font-family: Arial, Helvetica, sans-serif;
+  background-image: url("frontpage.PNG");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  color: white;
+  /* display: flex; */
+  /* justify-content: center;
+  align-items: center; */
 }
 
 .home-buttons {
@@ -79,3 +88,15 @@ body{
   margin-top: 5px;
   font-size: 35px;
 }
+/* Home.css */
+/* .home {
+  background-image: url("images/frontpage.PNG");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */

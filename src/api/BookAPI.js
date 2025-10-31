@@ -1,7 +1,5 @@
-// BookAPI.js
-// Integrates Open Library search and Heroku persistence.
-
 import { fetchAllRecords, createRecord, updateRecord, deleteRecord } from "./CoreAPI.js";
+import { getCurrentUser } from "./UserAPI.js";
 
 const BOOK_TYPE = "book";
 
@@ -20,20 +18,14 @@ function normalizeBookRecord(raw) {
     coverUrl: b.coverUrl ?? null,
     workKey: b.workKey ?? "",
     ownerEmail: b.ownerEmail ?? "",
-    createdAt: b.createdAt ?? null
+    createdAt: b.createdAt ?? null,
   };
 }
-
-
 
 // ----------------------
 // 🔹 Open Library Search
 // ----------------------
 
-/**
- * Search books by title on Open Library.
- * Example: https://openlibrary.org/search.json?title=Dune
- */
 export async function searchBooksByTitle(title) {
   if (!title?.trim()) return [];
   const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(title)}&limit=20`;
@@ -51,9 +43,6 @@ export async function searchBooksByTitle(title) {
   }));
 }
 
-/**
- * Get detailed book info by work key (e.g. '/works/OL82563W')
- */
 export async function getBookDetails(workKey) {
   if (!workKey) return null;
   const normalizedKey = workKey.startsWith("/works/") ? workKey : `/works/${workKey}`;
@@ -71,8 +60,6 @@ export async function getBooks(currentUserEmail = null) {
     const allRecords = await fetchAllRecords();
     const bookRecords = allRecords.filter((r) => r.data_json?.type === BOOK_TYPE);
     const normalized = bookRecords.map(normalizeBookRecord);
-
-    // Optional filter for per-user views
     return currentUserEmail
       ? normalized.filter((b) => b.ownerEmail === currentUserEmail)
       : normalized;
@@ -80,6 +67,18 @@ export async function getBooks(currentUserEmail = null) {
     console.error("❌ getBooks failed:", err.message);
     throw err;
   }
+}
+
+// ✅ Fixed: use createRecord instead of api.post()
+export async function addBook(bookData) {
+  const payload = {
+    ...bookData,
+    type: BOOK_TYPE,
+    createdAt: Date.now(),
+  };
+  const res = await createRecord(payload);
+  const created = res?.[0] ?? null;
+  return created ? normalizeBookRecord(created) : null;
 }
 
 export async function addBookFromOpenLibrary(openBook, userEmail, book_status) {
@@ -94,32 +93,23 @@ export async function addBookFromOpenLibrary(openBook, userEmail, book_status) {
     workKey: openBook.workKey,
     ownerEmail: userEmail ?? "",
     createdAt: Date.now(),
-    status: book_status
+    status: book_status,
   };
   const res = await createRecord(payload);
   const created = res?.[0] ?? null;
   return created ? normalizeBookRecord(created) : null;
 }
 
-// ✅ Safe updateBook that merges old fields instead of replacing them
 export async function updateBook(recordId, updatedFields) {
-  //Fetch all records to find the full book object
   const allRecords = await fetchAllRecords();
-  const record = allRecords.find(r => r.id === recordId);
+  const record = allRecords.find((r) => r.id === recordId);
   if (!record) throw new Error(`Book with ID ${recordId} not found`);
-
-  //Merge existing data with new fields
   const current = record.data_json || record.body || {};
   const merged = { ...current, ...updatedFields };
-
-  //Send merged data back to the API
   const result = await updateRecord(recordId, merged);
-
-  //Return normalized book
   const updated = result?.[0];
   return updated ? normalizeBookRecord(updated) : null;
 }
-
 
 export async function deleteBook(recordId) {
   try {
@@ -130,4 +120,40 @@ export async function deleteBook(recordId) {
     console.error("❌ deleteBook failed:", err.message);
     throw err;
   }
+}
+
+// ----------------------
+// 🔹 Helpers
+// ----------------------
+
+export async function fetchUserBookLists(userEmail) {
+  if (!userEmail) throw new Error("Missing user email");
+  const allBooks = await getBooks(userEmail);
+  const tbrBooks = allBooks.filter((b) => b.status === "tbr");
+  const readBooks = allBooks.filter((b) => b.status === "read");
+  return { tbrBooks, readBooks };
+}
+
+export async function addBookIfNotExists(bookData, status = "tbr") {
+  const currentUser = getCurrentUser();
+  if (!currentUser) throw new Error("You must be logged in to add books.");
+
+  const { tbrBooks, readBooks } = await fetchUserBookLists(currentUser.email);
+  const allUserBooks = [...tbrBooks, ...readBooks];
+  const alreadyExists = allUserBooks.some((b) => b.workKey === bookData.workKey);
+
+  if (alreadyExists) {
+    console.log("Book already exists in user list, skipping add.");
+    return null;
+  }
+
+  const newBook = {
+    ...bookData,
+    type: BOOK_TYPE,
+    ownerEmail: currentUser.email,
+    status,
+    createdAt: Date.now(),
+  };
+
+  return await addBook(newBook);
 }
