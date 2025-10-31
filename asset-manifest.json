@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ShelfLife/static/css/main.4868278f.css",
+    "main.js": "/ShelfLife/static/js/main.99401646.js",
+    "static/media/frontpage.PNG": "/ShelfLife/static/media/frontpage.be4fc8bf18a389691215.PNG",
+    "static/media/pages.jpeg": "/ShelfLife/static/media/pages.67c4fed9edb3aed37c92.jpeg",
+    "index.html": "/ShelfLife/index.html",
+    "main.4868278f.css.map": "/ShelfLife/static/css/main.4868278f.css.map",
+    "main.99401646.js.map": "/ShelfLife/static/js/main.99401646.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4868278f.css",
+    "static/js/main.99401646.js"
+  ]
+}
