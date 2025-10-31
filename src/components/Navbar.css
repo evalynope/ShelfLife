@@ -2,12 +2,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #2b0504;
+  background-color: rgb(62, 36, 14);
   color: white;
   padding: 15px 40px;
   position: sticky;
   top: 0;
   z-index: 1000;
+  /* font-family: 'La Belle Aurore', cursive; */
 }
 
 .nav-links a {
@@ -15,7 +16,7 @@
   margin-left: 20px;
   text-decoration: none;
   font-weight: bold;
-  font-family: "Courier", sans-serif;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 .nav-links a:hover {
@@ -24,8 +25,8 @@
 
 .nav-title {
   font-size: 1.5rem;
-  font-family: "Courier", sans-serif;
   font-weight: "bold";
+  font-family: 'La Belle Aurore', cursive;
 }
 
 .logout-btn {

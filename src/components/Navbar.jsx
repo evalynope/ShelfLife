@@ -17,10 +17,10 @@ function Navbar({ userLoggedIn, setUserLoggedIn }) {
     <nav className="navbar">
       <h2 className="nav-title">Shelf Life</h2>
       <div className="nav-links">
-        <Link to="/search">Search Books</Link>
-        <Link to="/dashboard">My TBR Shelf</Link>
         <Link to="/">Home</Link>
+        <Link to="/dashboard">My Shelf</Link>
         <Link to="/mytitles">Read</Link>
+        <Link to="/search">Search</Link>
 
         {userLoggedIn ? (
           <Link to="/" onClick={handleLogout}>
