@@ -27,7 +27,7 @@ function Home() {
 
   return (
     <div className="home">
-      <h1>Welcome to Shelf Life</h1>
+      <h1 className="title">Welcome to Shelf Life</h1>
 
       {!currentUser ? (
         <>
@@ -39,8 +39,8 @@ function Home() {
         </>
       ) : (
         <>
-          <h2>Hello, {currentUser.displayName || currentUser.email}!</h2>
-          <p>Here’s a quick look at your books:</p>
+          <h2 className="welcome-in">Hello, {currentUser.displayName || currentUser.email}!</h2>
+          <p className="short">Here’s a quick look at your books:</p>
 
           {/* TBR Preview */}
           {tbrBooks.length > 0 && (

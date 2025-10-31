@@ -18,7 +18,7 @@ function Navbar({ userLoggedIn, setUserLoggedIn }) {
       <h2 className="nav-title">Shelf Life</h2>
       <div className="nav-links">
         <Link to="/">Home</Link>
-        <Link to="/dashboard">My Shelf</Link>
+        <Link to="/dashboard">My List</Link>
         <Link to="/mytitles">Read</Link>
         <Link to="/search">Search</Link>
 

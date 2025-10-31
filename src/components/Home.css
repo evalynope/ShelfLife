@@ -38,9 +38,44 @@
 
 body{
   background-image: url("pages.jpeg");
-  cursor: url('cursor.png') 0 0, auto;
+  /* cursor: url('cursor.png') 0 0, auto; */
 }
 
 * {
-  /* cursor: url('cursor.png') 0 0, auto; */
+  cursor: url('cursor.png') 0 0, auto;
+}
+
+.title {
+  overflow: hidden;
+  border-right: none, solid #654321;
+  white-space: nowrap;
+  margin: 0 auto;
+  letter-spacing: 0.05em;
+  animation: typing 3s steps(30) forwards, blink-caret 0.75s step-end 12s;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  /* font-family: 'Courier New', Courier, monospace; */
+  font-size: 55px;
+}
+
+@keyframes typing{
+  from {width: 0}
+  to {width: 100%}
+}
+@keyframes blink-caret{
+  from, to {border-color: transparent;}
+  25% {border-color: #654321;}
+}
+
+.welcome-in{
+  font-size: 45px;
+  /* margin-top: 3px; */
+  margin: 0 auto;
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+  font-family: fantasy;
+  
+}
+
+.short{
+  margin-top: 5px;
+  font-size: 35px;
 }
