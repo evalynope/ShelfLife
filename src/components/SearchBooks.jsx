@@ -1,52 +1,79 @@
 import React, { useState } from "react";
-import { searchBooksByTitle, addBookFromOpenLibrary } from "../api/BookAPI";
+import axios from "axios";
+import { addBookIfNotExists, fetchUserBookLists } from "../api/BookAPI";
+import { getCurrentUser } from "../api/UserAPI";
 
-function SearchBooks({ currentUserEmail }) {
+function SearchBooks() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
-  const handleSearch = async (e) => {
+  // --- Search Open Library API ---
+  async function handleSearch(e) {
     e.preventDefault();
     if (!query.trim()) return;
-    setLoading(true);
-    setMessage("");
 
+    setLoading(true);
     try {
-      const books = await searchBooksByTitle(query);
+      const response = await axios.get(
+        `https://openlibrary.org/search.json?title=${encodeURIComponent(query)}`
+      );
+
+      const books = response.data.docs.slice(0, 10).map((b) => ({
+        title: b.title,
+        author: Array.isArray(b.author_name)
+          ? b.author_name.join(", ")
+          : b.author_name || "Unknown",
+        description: b.first_publish_year
+          ? `First published in ${b.first_publish_year}`
+          : "No description available",
+        workKey: b.key,
+        coverUrl: b.cover_i
+          ? `https://covers.openlibrary.org/b/id/${b.cover_i}-L.jpg`
+          : null,
+      }));
+
       setResults(books);
-      if (books.length === 0) setMessage("No results found.");
     } catch (err) {
-      setMessage(`Error: ${err.message}`);
+      console.error("Error searching Open Library:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const handleAddBook = async (book) => {
-    try {
-      await addBookFromOpenLibrary(book, currentUserEmail, "tbr");
-      alert(`✅ Added "${book.title}" to your TBR shelf!`);
-    } catch (err) {
-      alert(`❌ Failed to add book: ${err.message}`);
+  // --- Debug helper: view user lists in console ---
+  async function viewMyLists() {
+    const user = getCurrentUser();
+    if (!user) {
+      alert("You must be logged in to view your lists.");
+      return;
     }
-  };
 
- 
-  const handleMarkAsRead = async (book) => {
+    const { tbrBooks, readBooks } = await fetchUserBookLists(user.email);
+    console.log("TBR:", tbrBooks);
+    console.log("Read:", readBooks);
+  }
+
+  // --- Add book to user's list ---
+  async function handleAdd(book, status) {
     try {
-        await addBookFromOpenLibrary(book, currentUserEmail, "read");
-        alert(`✅ Marked "${book.title}" as read!`);
+      const added = await addBookIfNotExists(book, status);
+      if (added) {
+        alert(
+          `✅ "${book.title}" added to your ${
+            status === "read" ? "Read" : "TBR"
+          } list!`
+        );
+      } else {
+        alert(`⚠️ "${book.title}" is already in your lists.`);
+      }
     } catch (err) {
-     alert(`❌ Failed to mark as read: ${err.message}`);
+      alert(`❌ Failed to add: ${err.message}`);
     }
-};
-
-    
+  }
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
+    <div style={{ padding: "20px", textAlign: "center" }}>
       <h2>Search Books</h2>
 
       <form onSubmit={handleSearch} style={{ marginBottom: "20px" }}>
@@ -54,26 +81,37 @@ function SearchBooks({ currentUserEmail }) {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter a book title..."
-          style={{ padding: "8px", width: "300px", marginRight: "10px" }}
+          placeholder="Search by title..."
+          style={{ padding: "8px", width: "60%" }}
         />
-        <button type="submit">Search</button>
+        <button
+          type="submit"
+          style={{ marginLeft: "10px", padding: "8px 16px" }}
+        >
+          Search
+        </button>
       </form>
 
       {loading && <p>Loading...</p>}
-      {message && <p>{message}</p>}
 
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "15px",
+        }}
+      >
         {results.map((book) => (
           <div
             key={book.workKey}
             style={{
-              border: "1px solid #ddd",
+              border: "1px solid #ccc",
               borderRadius: "8px",
-              margin: "10px",
               padding: "10px",
-              width: "200px",
+              width: "220px",
               textAlign: "center",
+              backgroundColor: "#faf9f6",
             }}
           >
             {book.coverUrl && (
@@ -84,14 +122,29 @@ function SearchBooks({ currentUserEmail }) {
               />
             )}
             <h4>{book.title}</h4>
-            <p>{book.authors?.join(", ")}</p>
-            <button onClick={() => handleAddBook(book)}>Add to TBR Shelf</button>
-            <button onClick={() => handleMarkAsRead(book)} style={{ marginTop: "5px" }}>
-             Mark as Read
-            </button>
+            <p>{book.author}</p>
+            <p style={{ fontSize: "0.9em", color: "#666" }}>
+              {book.description}
+            </p>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: "6px",
+                marginTop: "8px",
+              }}
+            >
+              <button onClick={() => handleAdd(book, "tbr")}>Add to TBR</button>
+              <button onClick={() => handleAdd(book, "read")}>Mark Read</button>
+            </div>
           </div>
         ))}
       </div>
+
+      <button onClick={viewMyLists} style={{ marginTop: "30px" }}>
+        View My Lists (console)
+      </button>
     </div>
   );
 }
