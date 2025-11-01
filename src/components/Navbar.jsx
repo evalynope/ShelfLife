@@ -10,7 +10,7 @@ function Navbar({ userLoggedIn, setUserLoggedIn }) {
     e.preventDefault();
     logoutUser();
     setUserLoggedIn(false);
-    navigate("/");
+    navigate(0);
   };
 
   return (

@@ -140,20 +140,21 @@ export async function addBookIfNotExists(bookData, status = "tbr") {
 
   const { tbrBooks, readBooks } = await fetchUserBookLists(currentUser.email);
   const allUserBooks = [...tbrBooks, ...readBooks];
-  const alreadyExists = allUserBooks.some((b) => b.workKey === bookData.workKey);
 
-  if (alreadyExists) {
-    console.log("Book already exists in user list, skipping add.");
-    return null;
-  }
+  const alreadyExists = allUserBooks.some(
+    (b) => b.workKey === bookData.workKey
+  );
+
+  if (alreadyExists) return false; // ✅ clearly false
 
   const newBook = {
     ...bookData,
-    type: BOOK_TYPE,
+    type: "book",
     ownerEmail: currentUser.email,
     status,
     createdAt: Date.now(),
   };
 
-  return await addBook(newBook);
+  await addBook(newBook);
+  return true; // ✅ clearly true
 }

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { addBookIfNotExists, fetchUserBookLists } from "../api/BookAPI";
-import { getCurrentUser } from "../api/UserAPI";
+import { addBookIfNotExists } from "../api/BookAPI";
+// import { fetchUserBookLists } from "../api/BookAPI";
+// import { getCurrentUser } from "../api/UserAPI";
 
 function SearchBooks() {
   const [query, setQuery] = useState("");
@@ -42,36 +43,31 @@ function SearchBooks() {
   }
 
   // --- Debug helper: view user lists in console ---
-  async function viewMyLists() {
-    const user = getCurrentUser();
-    if (!user) {
-      alert("You must be logged in to view your lists.");
-      return;
-    }
+  // async function viewMyLists() {
+  //   const user = getCurrentUser();
+  //   if (!user) {
+  //     alert("You must be logged in to view your lists.");
+  //     return;
+  //   }
 
-    const { tbrBooks, readBooks } = await fetchUserBookLists(user.email);
-    console.log("TBR:", tbrBooks);
-    console.log("Read:", readBooks);
-  }
+  //   const { tbrBooks, readBooks } = await fetchUserBookLists(user.email);
+  //   console.log("TBR:", tbrBooks);
+  //   console.log("Read:", readBooks);
+  // }
 
   // --- Add book to user's list ---
-  async function handleAdd(book, status) {
-    try {
-      const added = await addBookIfNotExists(book, status);
-      if (added) {
-        alert(
-          `✅ "${book.title}" added to your ${
-            status === "read" ? "Read" : "TBR"
-          } list!`
-        );
-      } else {
-        alert(`⚠️ "${book.title}" is already in your lists.`);
-      }
-    } catch (err) {
-      alert(`❌ Failed to add: ${err.message}`);
+async function handleAdd(book, status) {
+  try {
+    const added = await addBookIfNotExists(book, status);
+    if (added) {
+      alert(`✅ "${book.title}" added to your ${status === "read" ? "Read" : "TBR"} list!`);
+    } else {
+      alert(`⚠️ "${book.title}" is already in your lists.`);
     }
+  } catch (err) {
+    alert(`❌ Failed to add: ${err.message}`);
   }
-
+}
   return (
     <div style={{ padding: "20px", textAlign: "center" }}>
       <h2>Search Books</h2>
@@ -142,9 +138,9 @@ function SearchBooks() {
         ))}
       </div>
 
-      <button onClick={viewMyLists} style={{ marginTop: "30px" }}>
+      {/* <button onClick={viewMyLists} style={{ marginTop: "30px" }}>
         View My Lists (console)
-      </button>
+      </button> */}
     </div>
   );
 }

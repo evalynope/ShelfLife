@@ -32,7 +32,7 @@ function Home() {
       {!currentUser ? (
         <>
           <p>Your personal tracker for books you want to read.</p>
-          <div className="home-buttons">
+          <div className="home-btn">
             <button onClick={() => navigate("/login")}>Login</button>
             <button onClick={() => navigate("/signup")}>Sign Up</button>
           </div>
@@ -45,7 +45,7 @@ function Home() {
           {/* TBR Preview */}
           {tbrBooks.length > 0 && (
             <div className="book-preview">
-              <h3>To Be Read</h3>
+              <p>To Be Read</p>
               <div className="book-grid">
                 {tbrBooks.map((book) => (
                   <div key={book.id} className="book-card">
@@ -67,7 +67,7 @@ function Home() {
           {/* Read Preview */}
           {readBooks.length > 0 && (
             <div className="book-preview">
-              <h3>Read Books</h3>
+              <p>Read Books</p>
               <div className="book-grid">
                 {readBooks.map((book) => (
                   <div key={book.id} className="book-card">

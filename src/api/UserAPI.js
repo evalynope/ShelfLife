@@ -38,15 +38,23 @@ export async function registerUser({ email, password, displayName }) {
   const hashedPassword = await generateSHA256Hash(salt + password);
 
   // Create user record on Heroku
-  await createRecord({
-    type: "user",
-    email: normalizedEmail,
-    displayName: displayName || normalizedEmail,
-    salt,
-    passwordHash: hashedPassword,
-    createdAt: Date.now(),
-  });
 
+const formattedDisplayName = displayName
+  ? displayName
+      .trim()
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")
+  : normalizedEmail;
+
+await createRecord({
+  type: "user",
+  email: normalizedEmail,
+  displayName: formattedDisplayName,
+  salt,
+  passwordHash: hashedPassword,
+  createdAt: Date.now(),
+});
  
   // Save session locally (include true Heroku record id)
   const sessionToken = btoa(`${normalizedEmail}|${Date.now()}`);
@@ -63,7 +71,6 @@ export async function registerUser({ email, password, displayName }) {
 // --- Login existing user ---
 export async function loginUser({ email, password }) {
   const normalizedEmail = email.trim().toLowerCase();
-
   const allRecords = await fetchAllRecords();
   const existingUsers = allRecords.filter(
     (record) => record.data_json?.type === "user"
@@ -81,16 +88,18 @@ export async function loginUser({ email, password }) {
   if (expectedHash !== matchingUser.data_json.passwordHash)
     throw new Error("Invalid email or password.");
 
-  // Save new session
+  // Save the *actual* displayName from the Heroku record
+  const userData = {
+    email: normalizedEmail,
+    displayName: matchingUser.data_json.displayName,
+  };
+
   const sessionToken = btoa(`${normalizedEmail}|${Date.now()}`);
   localStorage.setItem("session_token", sessionToken);
-  localStorage.setItem(
-    "current_user",
-    JSON.stringify({
-      email: normalizedEmail,
-      displayName: matchingUser.data_json.displayName,
-    })
-  );
+  localStorage.setItem("current_user", JSON.stringify(userData));
+
+  // ✅ Return the user data so your components can update immediately
+  return userData;
 }
 
 // --- Logout current user ---

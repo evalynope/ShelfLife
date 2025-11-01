@@ -13,6 +13,10 @@
   align-items: center; */
 }
 
+.title {
+  background-color: rgba(255, 255, 255, 0.549);
+}
+
 .home-buttons {
   margin-top: 20px;
 }
@@ -36,7 +40,8 @@
 }
 
 .book-card {
-  width: 100px;
+  padding-left: 20px;
+  width: 200px;
   text-align: center;
 }
 
@@ -45,13 +50,13 @@
   border-radius: 6px;
 }
 
-body{
+body {
   background-image: url("pages.jpeg");
   /* cursor: url('cursor.png') 0 0, auto; */
 }
 
 * {
-  cursor: url('cursor.png') 0 0, auto;
+  cursor: url("cursor.png") 0 0, auto;
 }
 
 .title {
@@ -61,30 +66,38 @@ body{
   margin: 0 auto;
   letter-spacing: 0.05em;
   animation: typing 3s steps(30) forwards, blink-caret 0.75s step-end 12s;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   /* font-family: 'Courier New', Courier, monospace; */
   font-size: 55px;
 }
 
-@keyframes typing{
-  from {width: 0}
-  to {width: 100%}
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 40%;
+  }
 }
-@keyframes blink-caret{
-  from, to {border-color: transparent;}
-  25% {border-color: #654321;}
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  25% {
+    border-color: #654321;
+  }
 }
 
-.welcome-in{
+.welcome-in {
   font-size: 45px;
   /* margin-top: 3px; */
   margin: 0 auto;
   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-  
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
 
-.short{
+.short {
   margin-top: 5px;
   font-size: 35px;
 }

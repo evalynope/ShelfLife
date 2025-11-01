@@ -1,6 +1,47 @@
+/* Global size bump — keeps current colors */
+:root {
+  /* tweak these two to dial size app-wide */
+  --btn-padding-y: 1rem;
+  --btn-padding-x: 1rem;
+  --btn-font-size: 1.05rem;
+  --btn-radius: 12px;
+  --btn-margin-left: 10px;
+}
+
+/* Your themed buttons (vintage library) */
+.btn,
+button,
+a.btn,
+input[type="button"],
+input[type="submit"] {
+  /* colors stay the same as before */
+  background: var(--wood, #5b4636);
+  color: var(--parchment, #f8f4e3);
+  border: 2px solid var(--gold, #c2a76e);
+
+  /* ⬆️ size bump */
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  font-size: var(--btn-font-size);
+  border-radius: var(--btn-radius);
+
+  /* keep your existing effects */
+  font-family: var(--font-serif, Georgia, "Times New Roman", serif);
+  box-shadow: var(--shadow, 0 8px 20px rgba(0, 0, 0, 0.25));
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.btn:hover,
+button:hover,
+a.btn:hover {
+  background: var(--wood-2, #7a5f44);
+}
+
 body {
   margin: 0;
-  font-family: 'Helvetica', sans-serif;
+  font-family: "Helvetica", sans-serif;
   background-color: #f4f4f4;
 }
 
@@ -31,4 +72,49 @@ body {
 
 .home-buttons button:hover {
   background-color: #3a539b;
+}
+
+.modal-overlay {
+  position: fixed; /* cover the viewport */
+  inset: 0; /* top:0 right:0 bottom:0 left:0 */
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6); /* dim backdrop */
+  display: flex;
+  align-items: center; /* vertical center */
+  justify-content: center; /* horizontal center */
+  z-index: 9999; /* above everything */
+}
+
+.modal-content {
+  background: #f8f4e3; /* parchment */
+  color: #3b2f1e; /* dark ink */
+  width: min(90vw, 420px);
+  padding: 1.75rem;
+  border-radius: 12px;
+  border: 2px solid #c2a76e; /* subtle gold border */
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45),
+    0 0 80px rgba(255, 229, 180, 0.25);
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.modal-close {
+  margin-top: 12px;
+  background: #5b4636;
+  color: #f8f4e3;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.modal-close:hover {
+  background: #7a5f44;
+}
+
+button {
+  margin: 8px; /* Adds a little breathing room around buttons */
+  padding: 10px 20px; /* Keeps sizing consistent */
+  font-size: 1rem; /* Matches your existing button text size */
+  cursor: pointer;
 }

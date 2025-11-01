@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/UserAPI";
+import "./LoginPage.css"
+
 
 function LoginPage({ setUserLoggedIn, setCurrentUserEmail }) {
   const navigate = useNavigate();
@@ -19,15 +21,13 @@ function LoginPage({ setUserLoggedIn, setCurrentUserEmail }) {
 
     try {
       // Call your API to login
-      await loginUser({ email, password });
+      const user = await loginUser({ email, password });
 
       // Update app login state
       setUserLoggedIn(true);
-      setCurrentUserEmail(email); // <-- add this
+      setCurrentUserEmail(user.email);
+      navigate("/", {replace: true});
 
-
-      // Redirect to dashboard
-      navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Login failed");
     }

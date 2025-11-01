@@ -10,62 +10,64 @@ import MyTitles from "./components/MyTitles";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SearchBooks from "./components/SearchBooks";
 import { getCurrentUser } from "./api/UserAPI";
+import "./App.css"
 
 // import Status from "./components/Status";
 
+
+
 function App() {
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const initialUser = getCurrentUser();
+  const [currentUserEmail, setCurrentUserEmail] = useState(() => initialUser?.email ?? null);
+  const [userLoggedIn, setUserLoggedIn] = useState(() => !!initialUser);
   const [showModal, setShowModal] = useState(false);
-  const [currentUserEmail, setCurrentUserEmail] = useState(null);
-  const [userBooks, setUserBooks] = useState([]);
  
   useEffect(() => {
   const storedUser = getCurrentUser();
-  if (storedUser && storedUser.email) {
+  if (storedUser) {
     setUserLoggedIn(true);
     setCurrentUserEmail(storedUser.email);
   }
 }, [])
 
-  const handleCloseModal = () => setShowModal(false);
+const handleLogout = () => {
+  setUserLoggedIn(false);
+  setCurrentUserEmail(null);
+};
 
   return (
-  <Router>
-    <Navbar userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />
+  <Router basename="/ShelfLife">
+    <Navbar
+    userLoggedIn={userLoggedIn}
+    setUserLoggedIn={setUserLoggedIn} 
+    setCurrentUserEmail={setCurrentUserEmail}
+    handleLogout={handleLogout}
+    />
 
 
 
     {/* Modal for not-logged-in warning */}
-    {showModal && (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "rgba(0,0,0,0.5)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          style={{
-            background: "white",
-            padding: "30px",
-            borderRadius: "8px",
-            textAlign: "center",
-          }}
-        >
-          <p>You must be logged in to view this page.</p>
-          <button onClick={handleCloseModal}>Close</button>
-        </div>
-      </div>
-    )}
+{showModal && (
+  <div
+    className="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    onClick={() => setShowModal(false)}   // click backdrop to close
+  >
+    <div
+      className="modal-content"
+      onClick={(e) => e.stopPropagation()} // don't close when clicking the box
+    >
+      <p>You must be logged in to view this page.</p>
+      <button className="modal-close" onClick={() => setShowModal(false)}>
+        Close
+      </button>
+    </div>
+  </div>
+)}
 
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Home currentUserEmail={currentUserEmail}/>} />
 
       {/* Login route */}
       <Route
@@ -93,7 +95,7 @@ function App() {
       <Route
   path="/dashboard"
   element={
-    <ProtectedRoute setShowModal={setShowModal}>
+    <ProtectedRoute userLoggedIn={userLoggedIn} setShowModal={setShowModal}>
       <Dashboard currentUserEmail={currentUserEmail} />
     </ProtectedRoute>
   }
@@ -102,7 +104,7 @@ function App() {
 <Route
   path="/mytitles"
   element={
-    <ProtectedRoute setShowModal={setShowModal}>
+    <ProtectedRoute userLoggedIn={userLoggedIn} setShowModal={setShowModal}>
       <MyTitles currentUserEmail={currentUserEmail} />
     </ProtectedRoute>
   }
@@ -111,10 +113,9 @@ function App() {
 <Route
   path="/search"
   element={
-    <ProtectedRoute setShowModal={setShowModal}>
+    <ProtectedRoute userLoggedIn={userLoggedIn} setShowModal={setShowModal}>
       <SearchBooks
         currentUserEmail={currentUserEmail}
-        setUserBooks={setUserBooks}
       />
     </ProtectedRoute>
   }

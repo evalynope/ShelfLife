@@ -28,8 +28,6 @@ function StarRating({ value, onChange }) {
   );
 }
 
-
-
 function MyTitles({ currentUserEmail }) {
   const [books, setBooks] = useState([]);
   const [activeBook, setActiveBook] = useState(null); // which book is being reviewed
@@ -97,7 +95,13 @@ function MyTitles({ currentUserEmail }) {
       {books.length === 0 ? (
         <p>No read books yet.</p>
       ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
           {books.map((book) => (
             <div
               key={book.id}
@@ -122,7 +126,13 @@ function MyTitles({ currentUserEmail }) {
 
               {/* Remove + Review buttons */}
               <button onClick={() => handleRemove(book.id)}>Remove</button>
-              <button onClick={() => setActiveBook(book)}>Rate/Review</button>
+
+              {/* Only show Rate/Review if user hasn't reviewed this book */}
+              {!reviews[book.workKey]?.some(
+                (r) => r.ownerEmail === currentUserEmail
+              ) && (
+                <button onClick={() => setActiveBook(book)}>Rate/Review</button>
+              )}
 
               {/* Show review form if this book is active */}
               {activeBook?.id === book.id && (
@@ -148,9 +158,13 @@ function MyTitles({ currentUserEmail }) {
                 <div style={{ marginTop: "10px", textAlign: "left" }}>
                   <h5>Reviews:</h5>
                   {reviews[book.workKey].map((r) => (
-                    <div key={r.id} style={{ borderTop: "1px solid #eee", paddingTop: "4px" }}>
+                    <div
+                      key={r.id}
+                      style={{ borderTop: "1px solid #eee", paddingTop: "4px" }}
+                    >
                       <p>
-                        ⭐ {r.rating}/5<br />
+                        ⭐ {r.rating}/5
+                        <br />
                         {r.text}
                       </p>
                     </div>
